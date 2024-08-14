@@ -113,8 +113,9 @@ int main()
                     .count() >= HEARTBEAT_INTERVAL)
         {
             for (size_t i = 1; i < fds.size(); ++i)
-            { // 跳过 server_fd (fds[0])
-                send_heartbeat_message(fds[i].fd); // 使用新的函数名
+            {
+                // 跳过 server_fd (fds[0])
+                send_heartbeat_message(fds[i].fd);
             }
             last_heartbeat_time = now;
             send_heartbeat = false;
