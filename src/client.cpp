@@ -6,7 +6,7 @@
 #include <iostream>
 #include <poll.h>
 #include <chrono>
-#include "message.h" // 包含 Message 结构体定义
+#include "message.h"
 
 const int PORT = 8080;
 const char* SERVER_IP = "127.0.0.1";

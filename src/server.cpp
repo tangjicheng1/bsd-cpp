@@ -8,7 +8,7 @@
 #include <poll.h>
 #include <arpa/inet.h>
 #include <chrono>
-#include "message.h" // 包含 Message 结构体定义
+#include "message.h"
 
 const int PORT = 8080;
 const int HEARTBEAT_INTERVAL = 1000; // 心跳间隔为 1 秒（1000 毫秒）
