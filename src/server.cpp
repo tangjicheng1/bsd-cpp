@@ -7,12 +7,13 @@
 #include <vector>
 #include <poll.h>
 #include <arpa/inet.h>
-
-#include "message.h"
+#include <chrono>
+#include "message.h" // 包含 Message 结构体定义
 
 const int PORT = 8080;
+const int HEARTBEAT_INTERVAL = 1000; // 心跳间隔为 1 秒（1000 毫秒）
 
-void handle_connection(int client_fd)
+void handle_connection(int client_fd, bool& send_heartbeat)
 {
     Message msg;
     int bytes_received = recv(client_fd, &msg, sizeof(msg), 0);
@@ -23,17 +24,36 @@ void handle_connection(int client_fd)
         msg.length = ntohs(msg.length);
 
         // 处理接收到的消息
-        std::cout << "Received message of type: " << msg.message_type
-                  << std::endl;
-
-        // 将length转换为网络序再回显给客户端
-        msg.length = htons(msg.length);
-        send(client_fd, &msg, sizeof(msg), 0);
+        if (msg.message_type == MESSAGE_TYPE_HELLO)
+        {
+            std::cout << "Received HELLO from client." << std::endl;
+            // 回复 HELLO 消息
+            Message reply;
+            reply.length = htons(sizeof(reply));
+            reply.message_type = MESSAGE_TYPE_HELLO;
+            strcpy(reply.body, "hello, client");
+            send(client_fd, &reply, sizeof(reply), 0);
+        }
+        else if (msg.message_type == MESSAGE_TYPE_HEARTBEAT)
+        {
+            std::cout << "Received HEARTBEAT from client." << std::endl;
+            send_heartbeat = true; // 客户端已发送心跳，准备发送心跳回去
+        }
     }
     else
     {
         close(client_fd);
     }
+}
+
+void send_heartbeat_message(int client_fd)
+{
+    Message heartbeat;
+    heartbeat.length = htons(sizeof(heartbeat));
+    heartbeat.message_type = MESSAGE_TYPE_HEARTBEAT;
+    strcpy(heartbeat.body, "heartbeat from server");
+    send(client_fd, &heartbeat, sizeof(heartbeat), 0);
+    std::cout << "Sent HEARTBEAT to client." << std::endl;
 }
 
 int main()
@@ -54,9 +74,12 @@ int main()
     server_pollfd.events = POLLIN;
     fds.push_back(server_pollfd);
 
+    bool send_heartbeat = false;
+    auto last_heartbeat_time = std::chrono::steady_clock::now();
+
     while (true)
     {
-        int poll_count = poll(fds.data(), fds.size(), -1);
+        int poll_count = poll(fds.data(), fds.size(), HEARTBEAT_INTERVAL);
 
         if (poll_count > 0)
         {
@@ -76,13 +99,25 @@ int main()
                     else
                     {
                         // 处理已连接的客户端消息
-                        handle_connection(fds[i].fd);
-                        // 从poll数组中移除处理完的客户端
-                        fds.erase(fds.begin() + i);
-                        --i;
+                        handle_connection(fds[i].fd, send_heartbeat);
                     }
                 }
             }
+        }
+
+        // 发送心跳消息
+        auto now = std::chrono::steady_clock::now();
+        if (send_heartbeat ||
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - last_heartbeat_time)
+                    .count() >= HEARTBEAT_INTERVAL)
+        {
+            for (size_t i = 1; i < fds.size(); ++i)
+            { // 跳过 server_fd (fds[0])
+                send_heartbeat_message(fds[i].fd); // 使用新的函数名
+            }
+            last_heartbeat_time = now;
+            send_heartbeat = false;
         }
     }
 
