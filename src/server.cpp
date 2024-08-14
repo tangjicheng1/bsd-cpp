@@ -1,18 +1,18 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/types.h>
-#include <sys/event.h>
-#include <sys/time.h>
 #include <unistd.h>
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <poll.h>
 #include <arpa/inet.h>
+
 #include "message.h"
 
 const int PORT = 8080;
 
-void handle_connection(int client_fd, struct kevent& event)
+void handle_connection(int client_fd)
 {
     Message msg;
     int bytes_received = recv(client_fd, &msg, sizeof(msg), 0);
@@ -33,7 +33,6 @@ void handle_connection(int client_fd, struct kevent& event)
     else
     {
         close(client_fd);
-        EV_SET(&event, client_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
     }
 }
 
@@ -49,27 +48,40 @@ int main()
     bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr));
     listen(server_fd, 10);
 
-    int kq = kqueue();
-    struct kevent event;
-    EV_SET(&event, server_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    kevent(kq, &event, 1, NULL, 0, NULL);
+    std::vector<struct pollfd> fds;
+    struct pollfd server_pollfd;
+    server_pollfd.fd = server_fd;
+    server_pollfd.events = POLLIN;
+    fds.push_back(server_pollfd);
 
-    std::vector<struct kevent> events(10);
     while (true)
     {
-        int event_count =
-            kevent(kq, NULL, 0, events.data(), events.size(), NULL);
-        for (int i = 0; i < event_count; ++i)
+        int poll_count = poll(fds.data(), fds.size(), -1);
+
+        if (poll_count > 0)
         {
-            if (events[i].ident == server_fd)
+            for (size_t i = 0; i < fds.size(); ++i)
             {
-                int client_fd = accept(server_fd, NULL, NULL);
-                EV_SET(&event, client_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-                kevent(kq, &event, 1, NULL, 0, NULL);
-            }
-            else
-            {
-                handle_connection(events[i].ident, events[i]);
+                if (fds[i].revents & POLLIN)
+                {
+                    if (fds[i].fd == server_fd)
+                    {
+                        // 新的客户端连接
+                        int client_fd = accept(server_fd, NULL, NULL);
+                        struct pollfd client_pollfd;
+                        client_pollfd.fd = client_fd;
+                        client_pollfd.events = POLLIN;
+                        fds.push_back(client_pollfd);
+                    }
+                    else
+                    {
+                        // 处理已连接的客户端消息
+                        handle_connection(fds[i].fd);
+                        // 从poll数组中移除处理完的客户端
+                        fds.erase(fds.begin() + i);
+                        --i;
+                    }
+                }
             }
         }
     }
