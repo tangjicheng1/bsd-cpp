@@ -14,3 +14,6 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 include_directories(${SRC_DIR})
 
 add_executable(main ${SRC_DIR}/main.cpp)
+
+add_executable(client ${SRC_DIR}/client.cpp)
+add_executable(server ${SRC_DIR}/server.cpp)
