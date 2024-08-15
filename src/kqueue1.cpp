@@ -105,7 +105,7 @@ int main()
 
         for (int i = 0; i < nev; i++)
         {
-            if (event_list[i].ident == server_fd)
+            if (event_list[i].ident == static_cast<uintptr_t>(server_fd))
             {
                 // 处理新连接
                 client_fd = accept(server_fd, NULL, NULL);
