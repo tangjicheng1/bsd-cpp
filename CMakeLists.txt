@@ -15,3 +15,10 @@ add_executable(main ${SRC_DIR}/main.cpp)
 
 add_executable(client ${SRC_DIR}/client.cpp)
 add_executable(server ${SRC_DIR}/server.cpp)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+    execute_process(COMMAND uname -r
+                    OUTPUT_VARIABLE FreeBSD_VERSION
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    message(STATUS "FreeBSD version: ${FreeBSD_VERSION}")
+endif()
