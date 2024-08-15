@@ -23,3 +23,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
     message(STATUS "FreeBSD version: ${FreeBSD_VERSION}")
 endif()
+
+add_executable(client1 ${SRC_DIR}/client1.cpp)
+add_executable(select1 ${SRC_DIR}/select1.cpp)
