@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(bsd-cpp LANGUAGES CXX C)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O3 -Wall -Wextra -std=c++20 ")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
