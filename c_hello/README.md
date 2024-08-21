@@ -1,7 +1,6 @@
 # build and run
 ```bash
-sudo apt-get update
-sudo apt-get install qemu-system-x86
+podman run -itd --name alpine --network host -v ~/:/my alpine:latest sh
 
-sudo dnf install qemu-system-x86
+apk add build-base
 ```
