@@ -1,20 +1,32 @@
-__attribute__((section(".multiboot")))
-const unsigned long multiboot_header[] = {
-    0x1BADB002,          // magic number
-    0x00,                // flags
-    -(0x1BADB002 + 0x00) // checksum
-};
+/* 64 bit linux. */
 
-void printString(const char *str) {
-  volatile char *video = (volatile char *)0xB8000;
-  while (*str) {
-    *video++ = *str++; // 写字符
-    *video++ = 0x07;   // 设置字符属性（颜色）
-  }
+#define SYSCALL_EXIT 60
+#define SYSCALL_WRITE 1
+
+void sys_exit(int error_code)
+{
+    asm volatile("syscall"
+                 :
+                 : "a"(SYSCALL_EXIT), "D"(error_code)
+                 : "rcx", "r11", "memory");
 }
 
-void _start() {
-  printString("Hello, World!");
-  while (1)
-    ; // 防止程序结束
+int sys_write(unsigned fd, const char* buf, unsigned count)
+{
+    unsigned ret;
+
+    asm volatile("syscall"
+                 : "=a"(ret)
+                 : "a"(SYSCALL_WRITE), "D"(fd), "S"(buf), "d"(count)
+                 : "rcx", "r11", "memory");
+
+    return ret;
+}
+
+void _start(void)
+{
+    const char hwText[] = "Hello world!\n";
+
+    sys_write(1, hwText, sizeof(hwText));
+    sys_exit(12);
 }
