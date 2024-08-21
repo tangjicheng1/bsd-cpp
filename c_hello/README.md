@@ -1,6 +1,7 @@
 # build and run
 ```bash
 podman run -itd --name alpine --network host -v ~/:/my alpine:latest sh
+podman exec -it alpine sh
 
 apk add build-base
 
