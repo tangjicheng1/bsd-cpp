@@ -19,6 +19,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
     add_executable(client2 ${SRC_DIR}/client2.cpp)
     target_link_libraries(client2 pthread)
+
+    add_executable(p1 ${SRC_DIR}/p1.cpp)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
