@@ -23,6 +23,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(p1 ${SRC_DIR}/p1.cpp)
     add_executable(p3 ${SRC_DIR}/p3.cpp)
     add_executable(worker ${SRC_DIR}/worker.cpp)
+
+    add_executable(p4 ${SRC_DIR}/p4.cpp)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
