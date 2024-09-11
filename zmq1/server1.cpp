@@ -1,8 +1,9 @@
-#include "zmq.hpp"
-#include <iostream>
-#include <string>
 #include <chrono>
+#include <iostream>
+#include <optional>
+#include <string>
 #include <thread>
+#include "zmq.hpp"
 
 int main() {
     zmq::context_t context(1);
@@ -12,7 +13,10 @@ int main() {
 
     while (true) {
         zmq::message_t request;
-        socket.recv(request, zmq::recv_flags::none);
+        auto received = socket.recv(request, zmq::recv_flags::none);
+        if (received == std::nullopt) {
+            continue;
+        }
         std::string req_str(static_cast<char*>(request.data()), request.size());
         std::cout << "server recv: " << req_str << std::endl;
 

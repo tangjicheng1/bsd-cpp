@@ -1,6 +1,6 @@
-#include "zmq.hpp"
 #include <iostream>
 #include <string>
+#include "zmq.hpp"
 
 int main() {
     zmq::context_t context(1);
@@ -16,7 +16,10 @@ int main() {
         socket.send(req_msg, zmq::send_flags::none);
 
         zmq::message_t reply;
-        socket.recv(reply, zmq::recv_flags::none);
+        auto received = socket.recv(reply, zmq::recv_flags::none);
+        if (received == std::nullopt) {
+            continue;
+        }
         std::string reply_str(static_cast<char*>(reply.data()), reply.size());
         std::cout << "client recv: " << reply_str << std::endl;
     }
