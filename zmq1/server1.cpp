@@ -1,14 +1,12 @@
-#include <zmq.hpp>
+#include "zmq.hpp"
 #include <iostream>
 #include <string>
 #include <chrono>
 #include <thread>
 
 int main() {
-    // 创建一个 ZeroMQ 上下文
     zmq::context_t context(1);
 
-    // 创建一个 REP（响应）套接字，绑定到指定端口
     zmq::socket_t socket(context, zmq::socket_type::rep);
     socket.bind("tcp://*:5555");
 
