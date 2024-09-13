@@ -38,9 +38,14 @@ make -j$(nproc)
 wget https://busybox.net/downloads/binaries/1.35.0-i686-linux-musl/busybox
 ```
 
+```
+mkdir temp
+cd temp
+```
+
 ```bash
 mkdir -p rootfs/{bin,sbin,etc,proc,sys,usr/{bin,sbin}}
-cp ./busybox rootfs/bin/
+cp ../busybox rootfs/bin/
 ```
 
 创建更多的busybox命令
@@ -87,6 +92,29 @@ chmod +x rootfs/init
 cd rootfs
 find . | cpio -o --format=newc | gzip > ../initramfs.cpio.gz
 ```
+
+### 创建grub配置文件
+
+拷贝内核镜像和 initramfs 到 iso 目录
+```bash
+mkdir -p iso/boot/grub
+cp ../arch/x86/boot/bzImage iso/boot/vmlinuz
+cp initramfs.cpio.gz iso/boot/
+```
+
+创建grub配置文件
+```bash
+cat > iso/boot/grub/grub.cfg << 'EOF'
+set timeout=5
+set default=0
+
+menuentry "Custom Linux Kernel" {
+    linux /boot/vmlinuz
+    initrd /boot/initramfs.cpio.gz
+}
+EOF
+```
+
 
 ### 创建iso镜像
 ```bash
