@@ -1,5 +1,13 @@
 # 编译Linux Kernel
 
+## 下载源码
+```bash
+wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.10.tar.xz
+tar xf linux-6.10.tar.xz
+cd linux-6.10
+```
+
+
 ## 配置并编译
 安装编译工具和必要的库
 ```bash
