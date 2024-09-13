@@ -43,6 +43,33 @@ mkdir -p rootfs/{bin,sbin,etc,proc,sys,usr/{bin,sbin}}
 cp ./busybox rootfs/bin/
 ```
 
+创建更多的busybox命令
+```bash
+cd rootfs/bin
+ln -s busybox sh
+ln -s busybox ls
+ln -s busybox cp
+ln -s busybox mv
+ln -s busybox rm
+ln -s busybox mkdir
+ln -s busybox echo
+ln -s busybox dmesg
+ln -s busybox ps
+ln -s busybox cat
+ln -s busybox grep
+ln -s busybox ping
+ln -s busybox ifconfig
+ln -s busybox mount
+ln -s busybox umount
+ln -s busybox vi
+ln -s busybox more
+ln -s busybox head
+ln -s busybox tail
+ln -s busybox free
+ln -s busybox df
+ln -s busybox du
+```
+
 创建 init 脚本
 ```bash
 cat > rootfs/init << 'EOF'
