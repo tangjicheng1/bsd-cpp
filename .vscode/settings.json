@@ -2,5 +2,7 @@
     "clangd.fallbackFlags": [
         "-I${workspaceFolder}/src",
         "-std=c++20"
-    ]
+    ],
+    "C_Cpp.default.compileCommands": "/home/jicheng.tang/demo-cpp/meson/builddir/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

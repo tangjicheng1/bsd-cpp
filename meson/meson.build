@@ -3,3 +3,4 @@ project('my1', 'cpp',
   default_options : ['cpp_std=c++20'])
 
 executable('socket_buf', 'socket_buf.cpp')
+executable('stdout1', 'stdout1.cpp')
