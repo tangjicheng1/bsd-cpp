@@ -14,3 +14,6 @@ make
 ## run
 cp ./my.py ./build
 python my.py
+
+##
+python -m site --user-site
