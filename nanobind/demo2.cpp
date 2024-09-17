@@ -1,23 +1,35 @@
 #include <nanobind/nanobind.h>
+#include <nanobind/trampoline.h>
 #include <cmath>
 
 namespace nb = nanobind;
 
-// 定义抽象类 Shape
+// 定义 Shape 抽象类
 class Shape {
    public:
     virtual ~Shape() = default;
 
-    // 纯虚函数，必须由子类实现
+    // 纯虚函数，允许 Python 覆盖
     virtual double area() const = 0;
 };
 
-// 定义派生类 Circle
+// 支持 Python 覆盖 Shape 类的虚函数
+class PyShape : public Shape {
+   public:
+    NB_TRAMPOLINE(Shape, 1);
+
+    // 覆写 area 函数，让 Python 中的类可以覆写该方法
+    double area() const override {
+        NB_OVERRIDE(area);
+    }
+};
+
 class Circle : public Shape {
    public:
     Circle(double radius) : radius_(radius) {
     }
 
+    // 实现 area 函数
     double area() const override {
         return M_PI * radius_ * radius_;
     }
@@ -26,32 +38,31 @@ class Circle : public Shape {
     double radius_;
 };
 
-// 定义派生类 Rectangle
 class Rectangle : public Shape {
    public:
     Rectangle(double width, double height) : width_(width), height_(height) {
     }
 
+    // 实现 area 函数
     double area() const override {
         return width_ * height_;
     }
 
    private:
-    double width_;
-    double height_;
+    double width_, height_;
 };
 
-// 使用 nanobind 绑定类到 Python
+// 模块定义
 NB_MODULE(demo2, m) {
-    // 绑定抽象类 Shape
-    nb::class_<Shape>(m, "Shape").def("area", &Shape::area);
+    // 绑定 Shape 类
+    nb::class_<Shape, PyShape>(m, "Shape").def("area", &Shape::area);
 
-    // 绑定派生类 Circle
+    // 绑定 Circle 类
     nb::class_<Circle, Shape>(m, "Circle")
         .def(nb::init<double>())  // 构造函数
         .def("area", &Circle::area);
 
-    // 绑定派生类 Rectangle
+    // 绑定 Rectangle 类
     nb::class_<Rectangle, Shape>(m, "Rectangle")
         .def(nb::init<double, double>())  // 构造函数
         .def("area", &Rectangle::area);
