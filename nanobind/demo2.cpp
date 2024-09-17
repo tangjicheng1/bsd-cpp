@@ -14,7 +14,7 @@ class Shape {
 };
 
 // 支持 Python 覆盖 Shape 类的虚函数
-class PyShape : public Shape {
+class BindedShape : public Shape {
    public:
     NB_TRAMPOLINE(Shape, 1);
 
@@ -55,7 +55,7 @@ class Rectangle : public Shape {
 // 模块定义
 NB_MODULE(demo2, m) {
     // 绑定 Shape 类
-    nb::class_<Shape, PyShape>(m, "Shape").def("area", &Shape::area);
+    nb::class_<Shape, BindedShape>(m, "Shape").def("area", &Shape::area);
 
     // 绑定 Circle 类
     nb::class_<Circle, Shape>(m, "Circle")
