@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(person_module)
+project(nanobind_example)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -16,4 +16,5 @@ execute_process(
 
 find_package(nanobind CONFIG REQUIRED)
 
-nanobind_add_module(person_module person.cpp)
+nanobind_add_module(demo1 demo1.cpp)
+nanobind_add_module(demo2 demo2.cpp)
