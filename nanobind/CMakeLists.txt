@@ -20,7 +20,7 @@ find_package(nanobind CONFIG REQUIRED)
 
 nanobind_add_module(demo1 demo1.cpp)
 nanobind_add_module(demo2 demo2.cpp)
-nanobind_add_module(demo3 demo3.cpp)
+nanobind_add_module(demo3_impl demo3.cpp)
 
 execute_process(
   COMMAND "${Python_EXECUTABLE}" -c "import site; print(site.getsitepackages()[0])"
@@ -28,5 +28,5 @@ execute_process(
   OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
 )
 
-install(TARGETS demo3
+install(TARGETS demo3_impl
     LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES})
