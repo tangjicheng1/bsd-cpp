@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(nanobind_example)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
@@ -20,3 +20,4 @@ find_package(nanobind CONFIG REQUIRED)
 
 nanobind_add_module(demo1 demo1.cpp)
 nanobind_add_module(demo2 demo2.cpp)
+nanobind_add_module(demo3 demo3.cpp)

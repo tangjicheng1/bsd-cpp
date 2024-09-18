@@ -16,7 +16,7 @@ class Shape {
 // 支持 Python 覆盖 Shape 类的虚函数
 class BindedShape : public Shape {
    public:
-    NB_TRAMPOLINE(Shape, 1);
+    NB_TRAMPOLINE(Shape, sizeof(Shape));
 
     // 覆写 area 函数，让 Python 中的类可以覆写该方法
     double area() const override {
