@@ -27,6 +27,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(p4 ${SRC_DIR}/p4.cpp)
 
     add_executable(shm1 ${SRC_DIR}/shm1.cpp)
+    target_link_libraries(shm1 rt)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
