@@ -1,5 +1,4 @@
 import demo3 
-
 class App(demo3.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
