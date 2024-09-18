@@ -1,3 +1,6 @@
+_skbuild/
+dist/
+*.egg-info/
 .cache/
 temp/
 store/

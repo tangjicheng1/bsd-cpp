@@ -17,3 +17,5 @@ python my.py
 
 ##
 python -m site --user-site
+
+pip install scikit-build cmake setuptools wheel nanobind
