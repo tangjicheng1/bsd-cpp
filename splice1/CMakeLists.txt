@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 
 add_executable(server server.cpp)
+add_executable(sendFile1 sendFile1.cpp)
