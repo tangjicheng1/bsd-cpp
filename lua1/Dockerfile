@@ -41,7 +41,11 @@ RUN wget https://luarocks.github.io/luarocks/releases/luarocks-${LUA_ROCKS_VERSI
 
 ENV PATH="/usr/local/bin:${PATH}"
 
+RUN luarocks install luastatic
+
 RUN lua -v && \
     luarocks --version
+
+WORKDIR /my
 
 CMD ["lua"]
