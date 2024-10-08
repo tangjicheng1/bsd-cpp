@@ -33,12 +33,10 @@ int main(int argc, char** argv) {
 
         pid_t pid = fork();
         if (pid < 0) {
-            // failed
             perror("Can NOT fork process");
             fclose(file);
             return EXIT_FAILURE;
         } else if (pid == 0) {
-            // in child process
             char* args[MAX_ARGS];
             char* token = strtok(command, " ");
             int i = 0;
@@ -54,7 +52,6 @@ int main(int argc, char** argv) {
             printf("Failed command: %s\n", command);
             exit(EXIT_FAILURE);
         } else {
-            // in parent process
             pids[count++] = pid;
         }
     }
