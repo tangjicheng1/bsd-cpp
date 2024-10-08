@@ -1,0 +1,3 @@
+ls -alht
+echo hello
+sleep 3
