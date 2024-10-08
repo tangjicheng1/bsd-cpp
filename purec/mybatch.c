@@ -5,8 +5,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define MAX_CMD_LENGTH 2048
-#define MAX_ARGS 256
+const int MAX_CMD_LENGTH = 2048;
+const int MAX_ARGS = 256;
 
 int main(int argc, char** argv) {
     if (argc != 2) {
