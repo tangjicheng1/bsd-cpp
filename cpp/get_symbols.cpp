@@ -1,9 +1,11 @@
-#include <iostream>
+#include <cxxabi.h>
 #include <elf.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <libelf.h>
 #include <gelf.h>
+#include <libelf.h>
+#include <unistd.h>
+#include <iostream>
+#include <vector>
 
 void print_symbols(const char* filename) {
     int fd = open(filename, O_RDONLY);
@@ -25,24 +27,35 @@ void print_symbols(const char* filename) {
         return;
     }
 
-    size_t shnum;
-    elf_getshnum(elf, &shnum);
+    size_t num_symbols = 0;
+    Elf_Scn* section = NULL;
 
-    for (size_t i = 0; i < shnum; ++i) {
-        Elf_Scn* scn = elf_getscn(elf, i);
-        if (!scn) continue;
-
+    // Iterate over sections to find symbol tables
+    while ((section = elf_nextscn(elf, section)) != NULL) {
         GElf_Shdr shdr;
-        gelf_getshdr(scn, &shdr);
+        gelf_getshdr(section, &shdr);
 
         if (shdr.sh_type == SHT_SYMTAB || shdr.sh_type == SHT_DYNSYM) {
-            Elf_Data* data = elf_getdata(scn, NULL);
-            size_t sym_count = shdr.sh_size / shdr.sh_entsize;
+            Elf_Data* data = elf_getdata(section, NULL);
+            num_symbols = shdr.sh_size / shdr.sh_entsize;
 
-            for (size_t j = 0; j < sym_count; ++j) {
+            for (size_t i = 0; i < num_symbols; ++i) {
                 GElf_Sym sym;
-                gelf_getsym(data, j, &sym);
-                std::cout << "Symbol: " << elf_strptr(elf, shdr.sh_link, sym.st_name) << std::endl;
+                gelf_getsym(data, i, &sym);
+
+                // Get symbol name
+                char* symbol_name = elf_strptr(elf, shdr.sh_link, sym.st_name);
+                if (symbol_name) {
+                    // Perform name demangling
+                    int status;
+                    char* demangled_name = abi::__cxa_demangle(symbol_name, NULL, NULL, &status);
+                    if (status == 0) {
+                        std::cout << demangled_name << std::endl;
+                        free(demangled_name);  // Free the demangled name after use
+                    } else {
+                        std::cout << "mangling failed: " << symbol_name << std::endl;
+                    }
+                }
             }
         }
     }
@@ -51,8 +64,8 @@ void print_symbols(const char* filename) {
     close(fd);
 }
 
-int main(int argc, char** argv) {
-    if (argc != 2) {
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <binary_file>" << std::endl;
         return 1;
     }
